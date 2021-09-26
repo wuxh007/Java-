@@ -1,0 +1,60 @@
+package Demo20210926;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+
+public class FontTest {
+    public static void main(String[] args) {
+        EventQueue.invokeLater(()->{
+            JFrame frame=new FonFrame();
+            frame.setTitle("FontTest");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setVisible(true);
+
+        });
+    }
+}
+    //带有文本信息组件的框架
+class FonFrame extends JFrame{
+    public FonFrame(){
+        add(new FontComponent());
+        pack();
+    }
+}
+    //在框中显示居中消息的组件
+class FontComponent extends JComponent{
+    private static final int DEFAULT_WIDTH=300;
+    private static final int DEFAULT_HEIGHT=200;
+    public void paintComponent(Graphics g){
+
+        Graphics2D g2=(Graphics2D) g;
+        String message="Hello World";
+
+        Font f=new Font("Serif",Font.BOLD,36);
+        g2.setFont(f);
+        //度量信息的大小
+        FontRenderContext context=g2.getFontRenderContext();
+        Rectangle2D bonds=f.getStringBounds(message,context);
+        //设定（x,y）作为文本的左上角
+        double x=(getWidth()-bonds.getWidth())/2;
+        double y=(getHeight()-bonds.getHeight())/2;
+        //上升y到达基线
+        double ascent=-bonds.getY();
+        double baseY=y+ascent;
+        //绘制基线
+        g2.drawString(message,(int)x,(int)baseY);
+        g2.setPaint(Color.LIGHT_GRAY);
+        g2.draw(new Line2D.Double(x,baseY,x+bonds.getWidth(),baseY));
+        //画外围矩阵
+        Rectangle2D rect=new Rectangle2D.Double(x,y,bonds.getWidth(),bonds.getHeight());
+        g2.draw(rect);
+
+    }
+    public Dimension getPreferredSize(){
+        return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    }
+}
